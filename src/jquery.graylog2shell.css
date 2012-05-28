@@ -1,0 +1,25 @@
+#shell-container {
+  clear: both;
+  margin: 0px 15px;
+  background-color: black;
+  padding: 5px;
+  color: white;
+}
+
+#shell-container ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.shell-prompt {
+  font-weight: bold;
+}
+
+.shell-command {
+  padding: 0;
+  border: 0;
+  font-family: monospace;
+  font-size: 14px;
+}
+

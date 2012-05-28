@@ -1,0 +1,28 @@
+{
+  "name": "jquery.graylog2shell",
+  "title": "jQuery Graylog2 Shell",
+  "description": "Shell for Graylog2",
+  "version": "0.1.0",
+  "homepage": "https://github.com/robertkowalski/jquery.graylog2shell",
+  "author": {
+    "name": "Robert Kowalski",
+    "email": "rok@kowalski.gd"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/robertkowalski/jquery.graylog2shell.git"
+  },
+  "bugs": {
+    "url": "https://github.com/robertkowalski/jquery.graylog2shell/issues"
+  },
+  "licenses": [
+    {
+      "type": "GPL",
+      "url": "https://github.com/robertkowalski/jquery.graylog2shell/blob/master/LICENSE-GPL"
+    }
+  ],
+  "dependencies": {
+    "jquery": "1.4.2"
+  },
+  "keywords": []
+}
