@@ -1,4 +1,4 @@
-/*! jQuery Graylog2 Shell - v0.1.0 - 2012-05-28
+/*! jQuery Graylog2 Shell - v0.1.0 - 2012-05-29
 * https://github.com/robertkowalski/jquery.graylog2shell
 * Copyright (c) 2012 Robert Kowalski; Licensed GPL */
 
@@ -23,7 +23,7 @@
 
       self.options = options;
       self.$element = $(element);
-      self._testContainer();
+      self._createContainerIfNotExists();
 
       self._setWidthOfInput();
       self._bindEventsFromKeyboard();
@@ -37,17 +37,29 @@
     },
 
     /**
-     * Create Container if not present
+     * Creates a container for the shell if not present
      * @private
      */
-    _testContainer: function() { 
+    _createContainerIfNotExists: function() {
+      var self = this,
+          containerExists = self._testForContainer();
+
+      if (!containerExists) {
+        self._renderShellHtml();
+      }
+    },
+
+    /**
+     * Tests if a container is present
+     * @private
+     */
+    _testForContainer: function() {
       var self = this,
           $container = $('#shell-container');
 
       if ($container && $container.length) {
-        return;
+        return true;
       }
-      self._renderShellHtml();
     },
 
     /**
@@ -63,6 +75,7 @@
                       </li>\
                     </ul>\
                   </div>';
+
       return html;
     },
 
@@ -72,8 +85,8 @@
      */
     _renderShellHtml: function() {
       var self = this,
+          html = self._createShellHtml();
 
-      html = self._createShellHtml();
       self.$element.html(html);
     },
 
