@@ -115,22 +115,29 @@
      * @private
      */
     _bindEventsFromKeyboard: function() {
-        var $container = $('#shell-container'),
+        var self = this,
+            $container = $('#shell-container'),
             $input = $container.find('input'),
             code,
-            lastCommand;
+            lastCommand,
+            value;
 
         $input.bind('keyup', function(e) {
           code = e.which;
           if (code === 13) { // "Enter" key
-            if ($.trim($input.val()).length === 0) {
+            value = $input.val();
+
+            if ($.trim(value).length === 0) {
               return;
             }
-            //processInput($(this).val());
-            lastCommand = $input.val();
+
+            self._processInput(value);
+            lastCommand = value;
             $input.val('');
+
           } else if (code === 38) { // "Up arrow" key
-            if (lastCommand && $input.val() !== lastCommand) {
+            value = $input.val();
+            if (lastCommand && value !== lastCommand) {
               $input.val(lastCommand);
             }
           }
@@ -144,7 +151,7 @@
     _processInput: function(input) {
       var $shell = $('#shell'),
           $input = $("#shell-command-input"),
-          html = '<li class="shell-wait"><img src="images/loading-shell.gif" /> Calculating</li>"';
+          html = '<li class="shell-wait"><div class="shell_loading"></div> Calculating</li>';
 
       $shell.append(html);
       

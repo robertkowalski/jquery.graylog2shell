@@ -1,7 +1,7 @@
 #shell-container {
   clear: both;
   margin: 0px 15px;
-  background-color: black;
+  background-color: #000;
   padding: 5px;
   color: white;
 }
@@ -23,3 +23,9 @@
   font-size: 14px;
 }
 
+.shell_loading {
+  height: 16px;
+  width: 16px;
+  background: url(../images/loading_shell.gif) no-repeat;
+  float: left;
+}

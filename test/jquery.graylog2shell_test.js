@@ -64,4 +64,16 @@
     strictEqual($(".shell-command-input").val(), 'graylog', 'input should be graylog then');
   });
 
+  test('a loading div is shown after sending input', 1, function() {
+    this.elem.shell();
+    $(".shell-command-input").val('graylog');
+
+    var e = $.Event('keyup');
+    e.which = 13;
+    $(".shell-command-input").trigger(e);
+
+    strictEqual($(".shell_loading").length, 1, 'a loading status should be shown then');
+  });
+
+
 }(jQuery));
