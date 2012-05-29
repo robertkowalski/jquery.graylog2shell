@@ -150,11 +150,10 @@
      */
     _processInput: function(input) {
       var $shell = $('#shell'),
-          $input = $("#shell-command-input"),
+          $input = $shell.find(".shell-command-input"),
           html = '<li class="shell-wait"><div class="shell_loading"></div><div>Calculating</div></li>';
 
       $shell.append(html);
-      
       $input.attr("disabled", "disabled");
     }
     

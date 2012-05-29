@@ -75,5 +75,17 @@
     strictEqual($(".shell_loading").length, 1, 'a loading status should be shown then');
   });
 
+  test('inputfields are being disabled', 1, function() {
+    this.elem.shell();
+    $(".shell-command-input").val('graylog');
+
+    var e = $.Event('keyup');
+    e.which = 13;
+    $(".shell-command-input").trigger(e);
+
+    strictEqual($(".shell-command-input").attr("disabled"), true, 'the inputfield gets disabled');
+  });
+
+
 
 }(jQuery));
