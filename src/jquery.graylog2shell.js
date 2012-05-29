@@ -195,6 +195,18 @@
 
     _makeAjaxCall: function(input) {
 
+      $.ajax({
+        type: "POST",
+        url: "analytics/shell",
+        dataType: "json",
+        data: { cmd : input },
+        success: function(data) {
+
+        },
+        error: function(data) {
+
+        }
+      });
     }
 
   };

@@ -111,6 +111,15 @@
     strictEqual($(".old-input").last().text(), "test", ".old input has value test");
   });
 
+  test("jQuery ajax should be called", 3, function() {
+    this.spy(jQuery, "ajax");
+    this.elem.shell();
+    this.enterText("test");
+
+    ok($.ajax.calledOnce);
+    equal(jQuery.ajax.getCall(0).args[0].url, "analytics/shell");
+    equal(jQuery.ajax.getCall(0).args[0].dataType, "json");
+  });
 
 
 }(jQuery));
