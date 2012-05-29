@@ -60,7 +60,6 @@
     this.enterText("");
 
     strictEqual($(".old-input").length, 0, "2 .old-input elements");
-
   });
 
   test("arrow key up should give the last command", 2, function() {
