@@ -151,7 +151,7 @@
     _processInput: function(input) {
       var $shell = $('#shell'),
           $input = $("#shell-command-input"),
-          html = '<li class="shell-wait"><div class="shell_loading"></div> Calculating</li>';
+          html = '<li class="shell-wait"><div class="shell_loading"></div><div>Calculating</div></li>';
 
       $shell.append(html);
       

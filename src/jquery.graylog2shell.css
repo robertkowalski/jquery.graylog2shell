@@ -28,4 +28,5 @@
   width: 16px;
   background: url(../images/loading_shell.gif) no-repeat;
   float: left;
+  padding-right: 5px;
 }
