@@ -6,7 +6,6 @@
   module("jQuery#buildShell", {
     setup: function() {
       this.elem = $(".shell-box");
-      this.fixture = $("#qunit-fixture");
 
       this.enterText = function(text) {
         $(".shell-command-input").val(text);
@@ -24,10 +23,10 @@
 
   test("creates the markup", 4, function() {
     this.elem.shell();
-    strictEqual(this.fixture.find('#shell-container').length, 1, "#shell-container-element should exist");
-    strictEqual(this.fixture.find('#shell').length, 1, "#shell-element should exist");
-    strictEqual(this.fixture.find('.shell-prompt').length, 1, ".shell-prompt-element should exist");
-    strictEqual(this.fixture.find('.shell-command-input').length, 1, ".shell-command-input-element should exist");
+    strictEqual($('#shell-container').length, 1, "#shell-container-element should exist");
+    strictEqual($('#shell').length, 1, "#shell-element should exist");
+    strictEqual($('.shell-prompt').length, 1, ".shell-prompt-element should exist");
+    strictEqual($('.shell-command-input').length, 1, ".shell-command-input-element should exist");
   });
 
   test("scales the input", 1, function() {
@@ -38,8 +37,8 @@
   });
 
   test("should be focussed", 1, function() {
-    /* no :focus in jQuery 1.4.2 */
     this.elem.shell();
+    /* no :focus in jQuery 1.4.2 */
     strictEqual($(".shell-command-input")[0], $(".shell-command-input")[0].ownerDocument.activeElement, "input should be focussed");
   });
 
