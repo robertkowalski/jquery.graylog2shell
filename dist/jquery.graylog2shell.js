@@ -1,4 +1,4 @@
-/*! jQuery Graylog2 Shell - v0.1.0 - 2012-05-29
+/*! jQuery Graylog2 Shell - v0.1.0 - 2012-05-30
 * https://github.com/robertkowalski/jquery.graylog2shell
 * Copyright (c) 2012 Robert Kowalski; Licensed GPL */
 
@@ -111,26 +111,54 @@
      * @private
      */
     _bindEventsFromKeyboard: function() {
-        var $container = $('#shell-container'),
-            $input = $container.find('input'),
-            code,
-            lastCommand;
+      var self = this,
+          $container = $('#shell-container'),
+          $input = $container.find('input'),
+          code,
+          lastCommand,
+          value;
 
-        $input.bind('keyup', function(e) {
-          code = e.which;
-          if (code === 13) { // "Enter" key
-            if ($.trim($input.val()).length === 0) {
-              return;
-            }
-            //processInput($(this).val());
-            lastCommand = $input.val();
-            $input.val('');
-          } else if (code === 38) { // "Up arrow" key
-            if (lastCommand && $input.val() !== lastCommand) {
-              $input.val(lastCommand);
-            }
+      $input.bind('keyup', function(e) {
+        code = e.which;
+        if (code === 13) { // "Enter" key
+          self._handleEnterPress();
+        } else if (code === 38) { // "Up arrow" key
+          lastCommand = self.lastCommand;
+          value = $input.val();
+          if (lastCommand && value !== lastCommand) {
+            $input.val(lastCommand);
           }
-        });
+        }
+      });
+    },
+
+    /**
+     * Actions after pressing enter with input
+     * @private
+     */
+    _handleEnterPress: function() {
+      var self = this,
+          $container = $('#shell-container'),
+          $input = $container.find("input"),
+          value = $input.val();
+
+      if (!$.trim(value).length) {
+        return;
+      } else if (value === "clear") {
+        self._clearShell();
+        return;
+      }
+
+      self._processInput(value);
+      self.lastCommand = value;
+      $input.val('');
+    },
+
+    _clearShell: function() {
+      var oldPrompt = $(".shell-prompt").first().html(),
+          $shellLines = $(".old-input, .shell-wait");
+
+      $shellLines.remove();
     },
 
     /**
@@ -138,14 +166,33 @@
      * @private
      */
     _processInput: function(input) {
-      var $shell = $('#shell'),
-          $input = $("#shell-command-input"),
-          html = '<li class="shell-wait"><img src="images/loading-shell.gif" /> Calculating</li>"';
+      var self = this,
+          $shell = $('#shell'),
+          $input = $shell.find(".shell-command-input"),
+          $prompt = $shell.find(".shell-prompt").first(),
+          $oldInput = $shell.find(".old-input"),
+          htmlWaiting = '<li class="shell-wait"><div class="shell-loading"></div><div>Calculating</div></li>',
+          htmlInput = '<li><span class="shell-prompt">' + $prompt.text() + '</span>' + '<span class="old-input">' + $input.val() + '</span></li>';
 
-      $shell.append(html);
-      
+      $shell.append(htmlWaiting);
+
+      if (!$oldInput || !$oldInput.length) { 
+        $input.parent()
+          .parent()
+          .prepend(htmlInput);
+      } else {
+        $oldInput.last()
+          .append(htmlInput);
+      }
+
       $input.attr("disabled", "disabled");
+      self._makeAjaxCall(input);
+    },
+
+    _makeAjaxCall: function(input) {
+
     }
+    
     
   };
 
