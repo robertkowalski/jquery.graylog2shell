@@ -37,7 +37,7 @@
     focus: function() {
       var self = this;
 
-      self.$element.find('input').focus();
+      self.$element.find("input").focus();
     },
 
     /**
@@ -59,7 +59,7 @@
      */
     _testForContainer: function() {
       var self = this,
-          $container = $('#shell-container');
+          $container = $("#shell-container");
 
       if ($container && $container.length) {
         return true;
@@ -99,14 +99,14 @@
      * @private
      */
     _setWidthOfInput: function() {
-      var $container = $('#shell-container'),
-          $prompt = $container.find('.shell-prompt'),
+      var $container = $("#shell-container"),
+          $prompt = $container.find(".shell-prompt"),
           spacer = 30,
           width = $container.outerWidth(false) - $prompt.outerWidth(false) - spacer;
 
       $container
-        .find('input')
-        .css('width', width);
+        .find("input")
+        .css("width", width);
     },
 
     /**
@@ -116,13 +116,13 @@
      */
     _bindEventsFromKeyboard: function() {
       var self = this,
-          $container = $('#shell-container'),
-          $input = $container.find('input'),
+          $container = $("#shell-container"),
+          $input = $container.find("input"),
           code,
           lastCommand,
           value;
 
-      $input.bind('keyup', function(e) {
+      $input.bind("keyup", function(e) {
         code = e.which;
         if (code === 13) { // "Enter" key
           self._handleEnterPress();
@@ -142,7 +142,7 @@
      */
     _handleEnterPress: function() {
       var self = this,
-          $container = $('#shell-container'),
+          $container = $("#shell-container"),
           $input = $container.find("input"),
           value = $input.val();
 
@@ -155,7 +155,7 @@
 
       self._processInput(value);
       self.lastCommand = value;
-      $input.val('');
+      $input.val("");
     },
 
     _clearShell: function() {
@@ -217,8 +217,8 @@
           method = args.shift();
 
       return this.each(function(index, element) {
-          var instance = $.data(element, 'shell') || $.data(element, 'shell', new Shell(options, element));
-          if (method && typeof method === 'string' && method.charAt(0) !== '_' && $.isFunction(instance[method])) {
+          var instance = $.data(element, "shell") || $.data(element, "shell", new Shell(options, element));
+          if (method && typeof method === "string" && method.charAt(0) !== "_" && $.isFunction(instance[method])) {
             instance[method].apply(instance, args);
           }
       });
