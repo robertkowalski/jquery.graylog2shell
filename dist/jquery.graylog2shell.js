@@ -1,4 +1,4 @@
-/*! jQuery Graylog2 Shell - v0.1.0 - 2012-05-30
+/*! jQuery Graylog2 Shell - v0.1.0 - 2012-05-31
 * https://github.com/robertkowalski/jquery.graylog2shell
 * Copyright (c) 2012 Robert Kowalski; Licensed GPL */
 
@@ -163,8 +163,7 @@
      * @private
      */
     _clearShell: function() {
-      var oldPrompt = $(".shell-prompt").first().html(),
-          $shellLines = $(".old-input, .shell-wait");
+      var $shellLines = $(".shell-old-input, .shell-wait");
 
       $shellLines.remove();
     },
@@ -179,20 +178,12 @@
           $shell = $('#shell'),
           $input = $shell.find(".shell-command-input"),
           $prompt = $shell.find(".shell-prompt").first(),
-          $oldInput = $shell.find(".old-input"),
+          $oldInput = $shell.find(".shell-old-input"),
           htmlWaiting = '<li class="shell-wait"><div class="shell-loading"></div><div>Calculating</div></li>',
-          htmlInput = '<li><span class="shell-prompt">' + $prompt.text() + '</span>' + '<span class="old-input">' + $input.val() + '</span></li>';
+          htmlInput = '<li><span class="shell-prompt">' + $prompt.text() + '</span>' + '<span class="shell-old-input">' + $input.val() + '</span></li>';
 
       $shell.append(htmlWaiting);
-
-      if (!$oldInput || !$oldInput.length) { 
-        $input.parent()
-          .parent()
-          .prepend(htmlInput);
-      } else {
-        $oldInput.last()
-          .append(htmlInput);
-      }
+      self._addLine(htmlInput);
 
       $input.attr("disabled", "disabled");
       self._makeAjaxCall(input);
@@ -204,6 +195,7 @@
      * @param {String} input
      */
     _makeAjaxCall: function(input) {
+      var self = this;
 
       $.ajax({
         type: "POST",
@@ -213,10 +205,85 @@
         success: function(data) {
 
         },
-        error: function(data) {
-
+        error: function() {
+          self._renderCallback({code: "error", reason: "Internal error."});
         }
       });
+    },
+
+    /**
+     * Adds lines to the shell
+     * @private
+     */
+    _addLine: function(line) {
+      var self = this,
+          $shell = $('#shell'),
+          $input = $shell.find(".shell-command-input"),
+          $oldInput = $shell.find(".shell-old-input");
+
+      if (!$oldInput || !$oldInput.length) {
+        $input.parent()
+          .parent()
+          .prepend(line);
+      } else {
+        $oldInput.last()
+          .append(line);
+      }
+    },
+
+    /**
+     * Builds lines for the shell
+     * @private
+     */
+    _buildResultLine: function(cssClass, msg) {
+      var self = this;
+
+      return '<li class="' + cssClass + '">' + self._getTimestamp() + ' - ' + msg + '</li>';
+    },
+
+    /**
+     * Builds times, like 12:35:23
+     * @private
+     */
+    _getTimestamp: function() {
+      var self = this,
+          date = new Date();
+
+      return self._dateHelper(date.getHours()) + ":" + self._dateHelper(date.getMinutes()) + ":" + self._dateHelper(date.getSeconds());
+    },
+
+    /**
+     * Adds leading zeros to number under 10
+     * @private
+     * @param {String, Number} datePartial
+     */
+    _dateHelper: function(datePartial) {
+      var number = +datePartial;
+
+      if (number < 10) {
+        number = "0" + number;
+      }
+
+      return number;
+    },
+
+    _renderCallback: function(data) {
+      var self = this,
+          html;
+
+      if (!data) {
+        html = self._buildResultLine("shell-error", "Internal error - Undefined result.");
+        self._addLine(html);
+        return;
+      }
+
+      if (data.code && data.code === "error") {
+        html = self._buildResultLine("shell-error", "Internal error.");
+        self._addLine(html);
+        return;
+      }
+
+
     }
 
   };
