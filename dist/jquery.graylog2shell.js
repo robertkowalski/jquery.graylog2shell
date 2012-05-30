@@ -30,6 +30,10 @@
       self.focus();
     },
 
+    /**
+     * Focus the input field
+     * @public
+     */
     focus: function() {
       var self = this;
 
@@ -154,6 +158,10 @@
       $input.val("");
     },
 
+    /**
+     * A clear command like in bash
+     * @private
+     */
     _clearShell: function() {
       var oldPrompt = $(".shell-prompt").first().html(),
           $shellLines = $(".old-input, .shell-wait");
@@ -164,6 +172,7 @@
     /**
      * Process input 
      * @private
+     * @param {String} input
      */
     _processInput: function(input) {
       var self = this,
@@ -189,6 +198,11 @@
       self._makeAjaxCall(input);
     },
 
+    /**
+     * Sends Ajax calls
+     * @private
+     * @param {String} input
+     */
     _makeAjaxCall: function(input) {
 
       $.ajax({
