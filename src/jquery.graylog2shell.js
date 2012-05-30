@@ -34,6 +34,10 @@
       self.focus();
     },
 
+    /**
+     * Focus the input field
+     * @public
+     */
     focus: function() {
       var self = this;
 
@@ -158,6 +162,10 @@
       $input.val("");
     },
 
+    /**
+     * A clear command like in bash
+     * @private
+     */
     _clearShell: function() {
       var oldPrompt = $(".shell-prompt").first().html(),
           $shellLines = $(".old-input, .shell-wait");
