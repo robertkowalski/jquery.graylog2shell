@@ -1,6 +1,7 @@
 /*global QUnit:false, module:false, test:false, asyncTest:false, expect:false*/
 /*global start:false, stop:false ok:false, equal:false, notEqual:false, deepEqual:false*/
 /*global notDeepEqual:false, strictEqual:false, notStrictEqual:false, raises:false*/
+/*global sinon:false*/
 (function($) {
 
   module("jQuery#buildShell", {
@@ -59,7 +60,7 @@
     this.enterText("");
     this.enterText("");
 
-    strictEqual($(".old-input").length, 0, "2 .old-input elements");
+    strictEqual($(".shell-old-input").length, 0, "2 .shell-old-input elements");
   });
 
   test("arrow key up should give the last command", 2, function() {
@@ -98,27 +99,63 @@
     this.enterText("test");
     this.enterText("clear");
 
-    strictEqual($(".old-input").length, 0, "no .old-input elements");
+    strictEqual($(".shell-old-input").length, 0, "no .shell-old-input elements");
     strictEqual($(".shell-wait").length, 0, "no .shell-wait elements");
   });
 
-  test("input shows up as 'old-input'", 2, function() {
+  test("new input shows up as 'shell-old-input' after submitting by pressing enter", 2, function() {
     this.elem.shell();
     this.enterText("graylog");
     this.enterText("test");
 
-    strictEqual($(".old-input").length, 2, "2 .old-input elements");
-    strictEqual($(".old-input").last().text(), "test", ".old input has value test");
+    strictEqual($(".shell-old-input").length, 2, "2 .shell-old-input elements");
+    strictEqual($(".shell-old-input").last().text(), "test", ".shell-old-input has value test");
   });
 
-  test("jQuery ajax should be called", 3, function() {
-    this.spy(jQuery, "ajax");
+  test("jQuery ajax should be called after pressing enter", 3, function() {
+    this.spy($, "ajax");
     this.elem.shell();
     this.enterText("test");
 
     ok($.ajax.calledOnce);
-    equal(jQuery.ajax.getCall(0).args[0].url, "analytics/shell");
-    equal(jQuery.ajax.getCall(0).args[0].dataType, "json");
+    strictEqual($.ajax.getCall(0).args[0].url, "analytics/shell");
+    strictEqual($.ajax.getCall(0).args[0].dataType, "json");
+  });
+
+  test("render callback should be called if a error happens", 2, function() {
+    var errorMsg = {code: "error", reason: "Internal error."};
+
+    sinon.stub($, "ajax").yieldsTo("error", []);
+
+    this.elem.shell();
+    var instance = $.data(this.elem[0], "shell");
+
+    this.spy(instance, "_renderCallback");
+
+    this.enterText("test");
+
+    ok(instance._renderCallback.calledOnce);
+    deepEqual(instance._renderCallback.getCall(0).args[0], errorMsg);
+  });
+
+  test("if renderCallback() gets no data, it will print an error", 2, function() {
+    this.elem.shell();
+    var instance = $.data(this.elem[0], "shell");
+
+    instance._renderCallback();
+
+    strictEqual($('#shell').find('.shell-error').length, 1);
+    strictEqual($('#shell').find('.shell-error').text(), "01:00:00 - Internal error - Undefined result."); // sinon qunit date is always 01:00
+  });
+
+  test("renderCallback() renders errors from the ajax-error callback", 2, function() {
+    this.elem.shell();
+    var instance = $.data(this.elem[0], "shell");
+
+    instance._renderCallback({code: "error", reason: "Internal error."});
+
+    strictEqual($('#shell').find('.shell-error').length, 1);
+    strictEqual($('#shell').find('.shell-error').text(), "01:00:00 - Internal error."); // sinon qunit date is always 01:00
   });
 
 
