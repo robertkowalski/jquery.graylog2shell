@@ -176,6 +176,7 @@
     /**
      * Process input 
      * @private
+     * @param {String} input
      */
     _processInput: function(input) {
       var self = this,
@@ -201,6 +202,11 @@
       self._makeAjaxCall(input);
     },
 
+    /**
+     * Sends Ajax calls
+     * @private
+     * @param {String} input
+     */
     _makeAjaxCall: function(input) {
 
       $.ajax({
