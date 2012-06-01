@@ -218,7 +218,8 @@
 
     _renderCallback: function(data) {
       var self = this,
-          html;
+          html,
+          $contentInner;
 
       if (!data) {
         html = self._buildResultLine("shell-error", "Internal error - Undefined result.");
@@ -227,12 +228,103 @@
       }
 
       if (data.code && data.code === "error") {
-        html = self._buildResultLine("shell-error", "Internal error.");
+        html = self._buildResultLine("shell-error", data.reason);
         self._addLine(html);
         return;
       }
 
+      if (!data.op) {
+        self._logToConsole("Found no data.op or other suitable data");
+        return;
+      }
 
+      if (data.op === "findresult") {
+        $contentInner = $("#content-inner");
+        $contentInner.html(data.content);
+        return;
+      }
+
+      if (data.code === "success") {
+        var result = "Completed in " + data.ms + "ms";
+
+        switch (data.op) {
+          case "count":
+            result += self._buildCountResult(data.result);
+            break;
+          case "distinct":
+            result += self._buildDistinctResult(data.result);
+            break;
+          case "distribution":
+            result += self._buildDistributionResult(data.result);
+            break;
+        }
+
+        html = self._buildResultLine("shell-success", result);
+        self._addLine(html);
+      }
+    },
+
+    _buildCountResult: function(data) {
+      var self = this,
+          result = " - Count result: ";
+
+      return result + self._wrapInSpan("shell-result-string", data);
+    },
+
+    _buildDistinctResult: function(data) {
+      var self = this,
+          result = " - Distinct result: ",
+          count = data.length,
+          i = 0,
+          index;
+
+      if (count === 0) {
+        result += "No matches.";
+      } else {
+        for (index in data) {
+          result += data[index];
+          if (i < count - 1) {
+            result += ",";
+          }
+          i++;
+        }
+      }
+
+      return self._wrapInSpan("shell-result-string", result);
+    },
+
+    _buildDistributionResult: function(data) {
+      var self = this,
+          result = " - Distribution result: ",
+          count = data.length,
+          i = 0,
+          index;
+
+      if (data.length === 0) {
+        result += "No matches.";
+      } else {
+        for (index in data) {
+          result += data[index].distinct + " (" + parseInt(data[index].count, 10) + ")";
+          if (i < count - 1) {
+            result += ", ";
+          }
+          i++;
+        }
+
+      }
+
+      return self._wrapInSpan("shell-result-string", result);
+    },
+
+    _wrapInSpan: function(cssClass, data) {
+
+      return '<span class="' + cssClass + '">' + data + '</span>';
+    },
+
+    _logToConsole: function(text) {
+      if (window.console && console.log) {
+        console.log(text);
+      }
     }
 
   };

@@ -49,7 +49,8 @@ module.exports = function(grunt) {
         multistr: true
       },
       globals: {
-        jQuery: true
+        jQuery: true,
+        console: true
       }
     },
     uglify: {}

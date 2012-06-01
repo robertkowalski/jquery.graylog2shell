@@ -150,5 +150,93 @@
     strictEqual($('#shell').find('.shell-error').text(), "01:00:00 - Internal error."); // sinon qunit date is always 01:00
   });
 
+  test("renderCallback() renders count results", 3, function() {
+    this.elem.shell();
+    var instance = $.data(this.elem[0], "shell"),
+        text = "42 is the answer to everything";
+
+    instance._renderCallback({code: "success", ms: "20", op: "count", result: text});
+
+    strictEqual($('#shell').find('.shell-success').length, 1);
+    strictEqual($('#shell').find('.shell-success').text().match(text)[0], text);
+    strictEqual($('#shell').find('.shell-success').text().match("Completed in 20ms")[0], "Completed in 20ms");
+  });
+
+  test("renderCallback() renders count results and 1 result has no comma at the end", 4, function() {
+    this.elem.shell();
+    var instance = $.data(this.elem[0], "shell"),
+        text = "42 is the answer to everything";
+
+    instance._renderCallback({code: "success", ms: "20", op: "distinct", result: [text]});
+
+    strictEqual($('#shell').find('.shell-success').length, 1);
+    strictEqual($('#shell').find('.shell-success').text().match(text)[0], text);
+    strictEqual($('#shell').find('.shell-success').text().match("Completed in 20ms")[0], "Completed in 20ms");
+    strictEqual($('#shell').find('.shell-success').text().split(",").length, 1);
+  });
+
+  test("renderCallback() renders 3 distinct results and the results contain 2 comma", 5, function() {
+    this.elem.shell();
+    var instance = $.data(this.elem[0], "shell"),
+        text = "42 is the answer to everything";
+
+    instance._renderCallback({code: "success", ms: "20", op: "distinct", result: [text, text, text]});
+
+    strictEqual($('#shell').find('.shell-success').length, 1);
+    strictEqual($('#shell').find('.shell-success').text().match(text)[0], text);
+    strictEqual($('#shell').find('.shell-success').text().match("Completed in 20ms")[0], "Completed in 20ms");
+    strictEqual($('#shell').find('.shell-success').text().split(",").length, 3);
+    strictEqual($('#shell').find('.shell-success').text().match("No matches."), null);
+  });
+
+  test("renderCallback() gets distinct results count from 0 and the result says 'no matches.'", 4, function() {
+    this.elem.shell();
+    var instance = $.data(this.elem[0], "shell"),
+        text = "No matches.";
+
+    instance._renderCallback({code: "success", ms: "20", op: "distinct", result: []});
+
+    strictEqual($('#shell').find('.shell-success').length, 1);
+    strictEqual($('#shell').find('.shell-success').text().match(text)[0], text);
+    strictEqual($('#shell').find('.shell-success').text().match("Completed in 20ms")[0], "Completed in 20ms");
+    strictEqual($('#shell').find('.shell-success').text().split(",").length, 1);
+  });
+
+  test("renderCallback() gets distribution results count from 0 and the result says 'no matches.'", 4, function() {
+    this.elem.shell();
+    var instance = $.data(this.elem[0], "shell"),
+        text = "No matches.";
+
+    instance._renderCallback({code: "success", ms: "20", op: "distribution", result: []});
+
+    strictEqual($('#shell').find('.shell-success').length, 1);
+    strictEqual($('#shell').find('.shell-success').text().match(text)[0], text);
+    strictEqual($('#shell').find('.shell-success').text().match("Completed in 20ms")[0], "Completed in 20ms");
+    strictEqual($('#shell').find('.shell-success').text().split(",").length, 1);
+  });
+
+  test("renderCallback() renders 3 distribution results and the results contain 2 comma", 5, function() {
+    this.elem.shell();
+    var instance = $.data(this.elem[0], "shell"),
+        item = {distinct: "42 is the answer to everything", count: 20};
+
+    instance._renderCallback({code: "success", ms: "25", op: "distribution", result: [item, item, item]});
+
+    strictEqual($('#shell').find('.shell-success').length, 1);
+    strictEqual($('#shell').find('.shell-success').text().match(item.distinct)[0], item.distinct);
+    strictEqual($('#shell').find('.shell-success').text().match("Completed in 25ms")[0], "Completed in 25ms");
+    strictEqual($('#shell').find('.shell-success').text().split(",").length, 3);
+    strictEqual($('#shell').find('.shell-success').text().match("No matches."), null);
+  });
+
+  test("renderCallback() renders findresult result", 2, function() {
+    this.elem.shell();
+    var instance = $.data(this.elem[0], "shell");
+
+    instance._renderCallback({code: "success", op: "findresult", content: '<div id="bar">foo</div>'});
+
+    strictEqual($('body').find('#bar').length, 1);
+    strictEqual($('body').find('#bar').text(), "foo");
+  });
 
 }(jQuery));
