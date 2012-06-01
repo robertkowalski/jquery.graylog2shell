@@ -6,7 +6,7 @@
 
   module("jQuery#buildShell", {
     setup: function() {
-      this.elem = $(".shell-box");
+      this.elem = $("#shell-container");
 
       this.enterText = function(text) {
         $(".shell-command-input").val(text);
@@ -20,14 +20,6 @@
   test("is chainable", 1, function() {
     // Not a bad test to run on collection methods.
     strictEqual(this.elem.shell(), this.elem, "should be chaninable");
-  });
-
-  test("creates the markup", 4, function() {
-    this.elem.shell();
-    strictEqual($('#shell-container').length, 1, "#shell-container-element should exist");
-    strictEqual($('#shell').length, 1, "#shell-element should exist");
-    strictEqual($('.shell-prompt').length, 1, ".shell-prompt-element should exist");
-    strictEqual($('.shell-command-input').length, 1, ".shell-command-input-element should exist");
   });
 
   test("scales the input", 1, function() {

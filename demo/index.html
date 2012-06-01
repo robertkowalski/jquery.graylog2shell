@@ -10,13 +10,20 @@
   <div>
 
   <div id="shell-box">
-   
+      <div id="shell-container">
+        <ul id="shell">
+          <li>
+            <span class="shell-prompt">rocko #</span>
+            <input class="shell-command-input" type="text" spellcheck="false">
+          </li>
+        </ul>
+      </div>
   </div>
 
   <div style="background-color: #cecece; height: 300px;">
   <div>
   <script>
-    $('#shell-box').shell();
+    $('#shell-container').shell();
   </script>
 </body>
 </html>

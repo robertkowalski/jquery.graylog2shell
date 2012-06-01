@@ -27,7 +27,6 @@
 
       self.options = options;
       self.$element = $(element);
-      self._createContainerIfNotExists();
 
       self._setWidthOfInput();
       self._bindEventsFromKeyboard();
@@ -42,60 +41,6 @@
       var self = this;
 
       self.$element.find("input").focus();
-    },
-
-    /**
-     * Creates a container for the shell if not present
-     * @private
-     */
-    _createContainerIfNotExists: function() {
-      var self = this,
-          containerExists = self._testForContainer();
-
-      if (!containerExists) {
-        self._renderShellHtml();
-      }
-    },
-
-    /**
-     * Tests if a container is present
-     * @private
-     */
-    _testForContainer: function() {
-      var self = this,
-          $container = $("#shell-container");
-
-      if ($container && $container.length) {
-        return true;
-      }
-    },
-
-    /**
-     * Create HTML for the Shell
-     * @private
-     */
-    _createShellHtml: function() {
-      var html = '<div id="shell-container">\
-                    <ul id="shell">\
-                      <li>\
-                        <span class="shell-prompt">rocko #</span>\
-                        <input class="shell-command-input" type="text" spellcheck="false">\
-                      </li>\
-                    </ul>\
-                  </div>';
-
-      return html;
-    },
-
-    /**
-     * Render Container HTML
-     * @private
-     */
-    _renderShellHtml: function() {
-      var self = this,
-          html = self._createShellHtml();
-
-      self.$element.html(html);
     },
 
     /**
@@ -221,7 +166,7 @@
      */
     _addLine: function(line) {
       var self = this,
-          $shell = $('#shell'),
+          $shell = $("#shell"),
           $input = $shell.find(".shell-command-input"),
           $oldInput = $shell.find(".shell-old-input");
 
