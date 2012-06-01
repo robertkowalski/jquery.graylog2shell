@@ -6,7 +6,7 @@
  * Licensed under the GPL license.
  */
 
-(function($) {
+(function($, window) {
 
   var Shell = function() {
     var self = this;
@@ -202,7 +202,7 @@
     },
 
     /**
-     * Adds leading zeros to number under 10
+     * Adds leading zeros to numbers under 10
      * @private
      * @param {String, Number} datePartial
      */
@@ -216,10 +216,16 @@
       return number;
     },
 
+    /**
+     * Prepares shell results and adds them to the shell / results
+     * @private
+     * @param {Object} data
+     */
     _renderCallback: function(data) {
       var self = this,
           html,
-          $contentInner;
+          $contentInner,
+          result;
 
       if (!data) {
         html = self._buildResultLine("shell-error", "Internal error - Undefined result.");
@@ -245,7 +251,7 @@
       }
 
       if (data.code === "success") {
-        var result = "Completed in " + data.ms + "ms";
+        result = "Completed in " + data.ms + "ms";
 
         switch (data.op) {
           case "count":
@@ -264,6 +270,11 @@
       }
     },
 
+    /**
+     * Helps preparing shell results for results with "count"
+     * @private
+     * @param {String} data
+     */
     _buildCountResult: function(data) {
       var self = this,
           result = " - Count result: ";
@@ -271,6 +282,11 @@
       return result + self._wrapInSpan("shell-result-string", data);
     },
 
+    /**
+     * Helps preparing shell results for results with "distinct"
+     * @private
+     * @param {Object, Array} data
+     */
     _buildDistinctResult: function(data) {
       var self = this,
           result = " - Distinct result: ",
@@ -293,6 +309,11 @@
       return self._wrapInSpan("shell-result-string", result);
     },
 
+    /**
+     * Helps preparing shell results for results with "distribution"
+     * @private
+     * @param {Object} data
+     */
     _buildDistributionResult: function(data) {
       var self = this,
           result = " - Distribution result: ",
@@ -316,11 +337,22 @@
       return self._wrapInSpan("shell-result-string", result);
     },
 
+    /**
+     * Wraps Strings in spans
+     * @private
+     * @param {String} cssClass
+     * @param {String} data
+     */
     _wrapInSpan: function(cssClass, data) {
 
       return '<span class="' + cssClass + '">' + data + '</span>';
     },
 
+    /**
+     * Logs to the console if present
+     * @private
+     * @param {String} text
+     */
     _logToConsole: function(text) {
       if (window.console && console.log) {
         console.log(text);
@@ -348,4 +380,4 @@
   };
 
 
-}(jQuery));
+}(jQuery, window));
