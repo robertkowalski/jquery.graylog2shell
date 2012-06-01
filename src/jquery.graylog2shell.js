@@ -338,7 +338,7 @@
     },
 
     /**
-     * Wraps Strings in spans
+     * Wraps Strings in span elements
      * @private
      * @param {String} cssClass
      * @param {String} data
@@ -358,7 +358,6 @@
         console.log(text);
       }
     }
-
   };
 
   $.fn.extend({
