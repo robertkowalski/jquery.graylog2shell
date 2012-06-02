@@ -10,7 +10,7 @@
 
   var Shell = function() {
     var self = this;
-    
+
     if ($.isFunction(self._init)) {
       self._init.apply(self, arguments);
     }
@@ -19,7 +19,7 @@
   Shell.prototype = {
 
     _init: function(opts, element) {
-      var self = this, 
+      var self = this,
           options = {};
 
       self.defaults = $.fn.shell.defaults;
@@ -118,7 +118,7 @@
     },
 
     /**
-     * Process input 
+     * Process input
      * @private
      * @param {String} input
      */
@@ -210,12 +210,14 @@
           $shell = $('#shell'),
           $oldInputContainer = $shell.find("#shell-oldinput-container"),
           $waiting = $shell.find('.shell-wait'),
+          $input = $shell.find("#shell-command-input"),
           history = self.options.history,
           html,
           $contentInner,
           result;
 
       $waiting.remove();
+      $input.attr("disabled", "");
 
       if ($oldInputContainer.find('.shell-history-line').length >= 15) {
         $oldInputContainer.find('.shell-history-line').first().remove();
@@ -357,7 +359,7 @@
 
   $.fn.extend({
     shell: function(options) {
-      var args = Array.prototype.slice.call(arguments), 
+      var args = Array.prototype.slice.call(arguments),
           method = args.shift();
 
       return this.each(function(index, element) {
