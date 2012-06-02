@@ -125,14 +125,18 @@
     _processInput: function(input) {
       var self = this,
           $shell = $('#shell'),
-          $input = $shell.find(".shell-command-input"),
+          $input = $shell.find("#shell-command-input"),
           $prompt = $shell.find(".shell-prompt").first(),
-          $oldInput = $shell.find(".shell-old-input"),
-          htmlWaiting = '<li class="shell-wait"><div class="shell-loading"></div><div>Calculating</div></li>',
-          htmlInput = '<li><span class="shell-prompt">' + $prompt.text() + '</span>' + '<span class="shell-old-input">' + $input.val() + '</span></li>';
+          $oldInputContainer = $shell.find("#shell-oldinput-container"),
+          htmlWaiting = '<div class="shell-wait"><div class="shell-loading"></div><div>Calculating</div></div>',
+          htmlInput = '<div><span class="shell-prompt">' + $prompt.text() + '&nbsp;</span>' + '<span class="shell-old-input">' + $input.val() + '</span></div>',
+          history = self.options.history;
 
       $shell.append(htmlWaiting);
-      self._addLine(htmlInput);
+
+      if (history) {
+        $oldInputContainer.append(htmlInput);
+      }
 
       $input.attr("disabled", "disabled");
       self._makeAjaxCall(input);
@@ -152,32 +156,12 @@
         dataType: "json",
         data: { cmd : input },
         success: function(data) {
-
+          self._renderCallback(data);
         },
         error: function() {
           self._renderCallback({code: "error", reason: "Internal error."});
         }
       });
-    },
-
-    /**
-     * Adds lines to the shell
-     * @private
-     */
-    _addLine: function(line) {
-      var self = this,
-          $shell = $("#shell"),
-          $input = $shell.find(".shell-command-input"),
-          $oldInput = $shell.find(".shell-old-input");
-
-      if (!$oldInput || !$oldInput.length) {
-        $input.parent()
-          .parent()
-          .prepend(line);
-      } else {
-        $oldInput.last()
-          .append(line);
-      }
     },
 
     /**
@@ -187,7 +171,7 @@
     _buildResultLine: function(cssClass, msg) {
       var self = this;
 
-      return '<li class="' + cssClass + '">' + self._getTimestamp() + ' - ' + msg + '</li>';
+      return '<span class="' + cssClass + '">' + self._getTimestamp() + ' - ' + msg + '</span>';
     },
 
     /**
@@ -223,19 +207,25 @@
      */
     _renderCallback: function(data) {
       var self = this,
+          $shell = $('#shell'),
+          $oldInputContainer = $shell.find("#shell-oldinput-container"),
+          $waiting = $shell.find('.shell-wait'),
+          history = self.options.history,
           html,
           $contentInner,
           result;
 
+      $waiting.remove();
+
       if (!data) {
         html = self._buildResultLine("shell-error", "Internal error - Undefined result.");
-        self._addLine(html);
+        $oldInputContainer.append(html);
         return;
       }
 
       if (data.code && data.code === "error") {
         html = self._buildResultLine("shell-error", data.reason);
-        self._addLine(html);
+        $oldInputContainer.append(html);
         return;
       }
 
@@ -266,7 +256,7 @@
         }
 
         html = self._buildResultLine("shell-success", result);
-        self._addLine(html);
+        $oldInputContainer.append(html);
       }
     },
 
@@ -375,7 +365,7 @@
   });
 
   $.fn.shell.defaults = {
-
+    history: true
   };
 
 

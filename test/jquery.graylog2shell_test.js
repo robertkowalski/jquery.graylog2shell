@@ -9,11 +9,14 @@
       this.elem = $("#shell-container");
 
       this.enterText = function(text) {
-        $(".shell-command-input").val(text);
+        $("#shell-command-input").val(text);
         var e = $.Event("keyup");
         e.which = 13;
-        $(".shell-command-input").trigger(e);
+        $("#shell-command-input").trigger(e);
       };
+    },
+    teardown: function() {
+
     }
   });
 
@@ -24,27 +27,27 @@
 
   test("scales the input", 1, function() {
     var spacer = 30;
+    var initialwidth = $("#shell-container").find("input").outerWidth(true);
     this.elem.shell();
-    var inputWidth =  $("#shell-container").outerWidth(false) - $(".shell-prompt").outerWidth(false) - spacer;
-    strictEqual($("#shell-container").find("input").css("width"), inputWidth + "px", "should be scaling the input width");
+    strictEqual($("#shell-container").find("input").outerWidth(true)>initialwidth, true, "should be scaling the input width");
   });
 
   test("should be focussed", 1, function() {
     this.elem.shell();
     /* no :focus in jQuery 1.4.2 */
-    strictEqual($(".shell-command-input")[0], $(".shell-command-input")[0].ownerDocument.activeElement, "input should be focussed");
+    strictEqual($("#shell-command-input")[0], $("#shell-command-input")[0].ownerDocument.activeElement, "input should be focussed");
   });
 
   test("input is emptied after pressing enter", 2, function() {
     this.elem.shell();
-    $(".shell-command-input").val('graylog');
-    strictEqual($(".shell-command-input").val(), 'graylog', "input should be graylog");
+    $("#shell-command-input").val('graylog');
+    strictEqual($("#shell-command-input").val(), 'graylog', "input should be graylog");
 
     var e = $.Event("keyup");
     e.which = 13;
 
-    $(".shell-command-input").trigger(e);
-    strictEqual($(".shell-command-input").val(), "", "input should be emptied after pressing enter");
+    $("#shell-command-input").trigger(e);
+    strictEqual($("#shell-command-input").val(), "", "input should be emptied after pressing enter");
   });
 
   test("empty input does not create new lines in shell", 1, function() {
@@ -57,18 +60,18 @@
 
   test("arrow key up should give the last command", 2, function() {
     this.elem.shell();
-    $(".shell-command-input").val('graylog');
-    strictEqual($(".shell-command-input").val(), "graylog", "input should be graylog");
+    $("#shell-command-input").val('graylog');
+    strictEqual($("#shell-command-input").val(), "graylog", "input should be graylog");
 
     var e = $.Event("keyup");
     e.which = 13;
-    $(".shell-command-input").trigger(e);
+    $("#shell-command-input").trigger(e);
 
     e = $.Event("keyup");
     e.which = 38;
-    $(".shell-command-input").trigger(e);
+    $("#shell-command-input").trigger(e);
 
-    strictEqual($(".shell-command-input").val(), "graylog", "input should be graylog then");
+    strictEqual($("#shell-command-input").val(), "graylog", "input should be graylog then");
   });
 
   test("a loading div is shown after sending input", 1, function() {
@@ -78,11 +81,11 @@
     strictEqual($(".shell-loading").length, 1, "a loading status should be shown then");
   });
 
-  test("inputfields are being disabled", 1, function() {
+  test("inputfield is disabled first", 1, function() {
     this.elem.shell();
     this.enterText("graylog");
 
-    strictEqual($(".shell-command-input").attr("disabled"), true, "the inputfield gets disabled");
+    strictEqual($("#shell-command-input").attr("disabled"), true);
   });
 
   test("input 'clear' clears the shell", 2, function() {
@@ -97,11 +100,19 @@
 
   test("new input shows up as 'shell-old-input' after submitting by pressing enter", 2, function() {
     this.elem.shell();
+    this.enterText("test1");
+    this.enterText("test");
+
+    strictEqual($("#shell-oldinput-container").find('div').length, 2, "2 .shell-old-input elements");
+    strictEqual($(".shell-old-input").last().text(), "test", ".shell-old-input has value test");
+  });
+
+  test("if history is disabled, new input shows NOT up after submitting by pressing enter", 1, function() {
+    this.elem.shell({history: false});
     this.enterText("graylog");
     this.enterText("test");
 
-    strictEqual($(".shell-old-input").length, 2, "2 .shell-old-input elements");
-    strictEqual($(".shell-old-input").last().text(), "test", ".shell-old-input has value test");
+    strictEqual($(".shell-old-input").length, 0);
   });
 
   test("jQuery ajax should be called after pressing enter", 3, function() {

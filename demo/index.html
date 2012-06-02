@@ -7,23 +7,26 @@
 
 <body>
   <div style="background-color: #cecece; height: 300px;">
-  <div>
+  </div>
 
   <div id="shell-box">
       <div id="shell-container">
-        <ul id="shell">
-          <li>
+        <div id="shell">
+          <div id="shell-oldinput-container">
+
+          </div>
+          <div>
             <span class="shell-prompt">rocko #</span>
-            <input class="shell-command-input" type="text" spellcheck="false">
-          </li>
-        </ul>
+            <input id="shell-command-input" class="shell-command" type="text" spellcheck="false" style="width: 810px; ">
+          </div>
+        </div>
       </div>
   </div>
 
   <div style="background-color: #cecece; height: 300px;">
   <div>
   <script>
-    $('#shell-container').shell();
+    $('#shell-container').shell({history: true});
   </script>
 </body>
 </html>
