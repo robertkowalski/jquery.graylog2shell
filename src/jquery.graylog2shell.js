@@ -129,7 +129,7 @@
           $prompt = $shell.find(".shell-prompt").first(),
           $oldInputContainer = $shell.find("#shell-oldinput-container"),
           htmlWaiting = '<div class="shell-wait"><div class="shell-loading"></div><div>Calculating</div></div>',
-          htmlInput = '<div><span class="shell-prompt">' + $prompt.text() + '&nbsp;</span>' + '<span class="shell-old-input">' + $input.val() + '</span></div>',
+          htmlInput = '<div class="shell-history-line"><span class="shell-prompt">' + $prompt.text() + '&nbsp;</span>' + '<span class="shell-old-input">' + $input.val() + '</span></div>',
           history = self.options.history;
 
       $shell.append(htmlWaiting);
@@ -171,7 +171,7 @@
     _buildResultLine: function(cssClass, msg) {
       var self = this;
 
-      return '<span class="' + cssClass + '">' + self._getTimestamp() + ' - ' + msg + '</span>';
+      return '<div class="' + cssClass + '">' + self._getTimestamp() + ' - ' + msg + '</div>';
     },
 
     /**
@@ -217,14 +217,19 @@
 
       $waiting.remove();
 
+      if ($oldInputContainer.find('.shell-history-line').length >= 15) {
+        $oldInputContainer.find('.shell-history-line').first().remove();
+        $oldInputContainer.find('.shell-history-result-line').first().remove();
+      }
+
       if (!data) {
-        html = self._buildResultLine("shell-error", "Internal error - Undefined result.");
+        html = self._buildResultLine("shell-error shell-history-result-line", "Internal error - Undefined result.");
         $oldInputContainer.append(html);
         return;
       }
 
       if (data.code && data.code === "error") {
-        html = self._buildResultLine("shell-error", data.reason);
+        html = self._buildResultLine("shell-error shell-history-result-line", data.reason);
         $oldInputContainer.append(html);
         return;
       }
@@ -255,7 +260,7 @@
             break;
         }
 
-        html = self._buildResultLine("shell-success", result);
+        html = self._buildResultLine("shell-success shell-history-result-line", result);
         $oldInputContainer.append(html);
       }
     },

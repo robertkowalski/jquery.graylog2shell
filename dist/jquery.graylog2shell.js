@@ -2,7 +2,7 @@
 * https://github.com/robertkowalski/jquery.graylog2shell
 * Copyright (c) 2012 Robert Kowalski; Licensed GPL */
 
-(function($) {
+(function($, window) {
 
   var Shell = function() {
     var self = this;
@@ -121,14 +121,18 @@
     _processInput: function(input) {
       var self = this,
           $shell = $('#shell'),
-          $input = $shell.find(".shell-command-input"),
+          $input = $shell.find("#shell-command-input"),
           $prompt = $shell.find(".shell-prompt").first(),
-          $oldInput = $shell.find(".shell-old-input"),
-          htmlWaiting = '<li class="shell-wait"><div class="shell-loading"></div><div>Calculating</div></li>',
-          htmlInput = '<li><span class="shell-prompt">' + $prompt.text() + '</span>' + '<span class="shell-old-input">' + $input.val() + '</span></li>';
+          $oldInputContainer = $shell.find("#shell-oldinput-container"),
+          htmlWaiting = '<div class="shell-wait"><div class="shell-loading"></div><div>Calculating</div></div>',
+          htmlInput = '<div class="shell-history-line"><span class="shell-prompt">' + $prompt.text() + '&nbsp;</span>' + '<span class="shell-old-input">' + $input.val() + '</span></div>',
+          history = self.options.history;
 
       $shell.append(htmlWaiting);
-      self._addLine(htmlInput);
+
+      if (history) {
+        $oldInputContainer.append(htmlInput);
+      }
 
       $input.attr("disabled", "disabled");
       self._makeAjaxCall(input);
@@ -148,32 +152,12 @@
         dataType: "json",
         data: { cmd : input },
         success: function(data) {
-
+          self._renderCallback(data);
         },
         error: function() {
           self._renderCallback({code: "error", reason: "Internal error."});
         }
       });
-    },
-
-    /**
-     * Adds lines to the shell
-     * @private
-     */
-    _addLine: function(line) {
-      var self = this,
-          $shell = $("#shell"),
-          $input = $shell.find(".shell-command-input"),
-          $oldInput = $shell.find(".shell-old-input");
-
-      if (!$oldInput || !$oldInput.length) {
-        $input.parent()
-          .parent()
-          .prepend(line);
-      } else {
-        $oldInput.last()
-          .append(line);
-      }
     },
 
     /**
@@ -183,7 +167,7 @@
     _buildResultLine: function(cssClass, msg) {
       var self = this;
 
-      return '<li class="' + cssClass + '">' + self._getTimestamp() + ' - ' + msg + '</li>';
+      return '<div class="' + cssClass + '">' + self._getTimestamp() + ' - ' + msg + '</div>';
     },
 
     /**
@@ -198,7 +182,7 @@
     },
 
     /**
-     * Adds leading zeros to number under 10
+     * Adds leading zeros to numbers under 10
      * @private
      * @param {String, Number} datePartial
      */
@@ -212,20 +196,37 @@
       return number;
     },
 
+    /**
+     * Prepares shell results and adds them to the shell / results
+     * @private
+     * @param {Object} data
+     */
     _renderCallback: function(data) {
       var self = this,
+          $shell = $('#shell'),
+          $oldInputContainer = $shell.find("#shell-oldinput-container"),
+          $waiting = $shell.find('.shell-wait'),
+          history = self.options.history,
           html,
-          $contentInner;
+          $contentInner,
+          result;
+
+      $waiting.remove();
+
+      if ($oldInputContainer.find('.shell-history-line').length >= 15) {
+        $oldInputContainer.find('.shell-history-line').first().remove();
+        $oldInputContainer.find('.shell-history-result-line').first().remove();
+      }
 
       if (!data) {
-        html = self._buildResultLine("shell-error", "Internal error - Undefined result.");
-        self._addLine(html);
+        html = self._buildResultLine("shell-error shell-history-result-line", "Internal error - Undefined result.");
+        $oldInputContainer.append(html);
         return;
       }
 
       if (data.code && data.code === "error") {
-        html = self._buildResultLine("shell-error", data.reason);
-        self._addLine(html);
+        html = self._buildResultLine("shell-error shell-history-result-line", data.reason);
+        $oldInputContainer.append(html);
         return;
       }
 
@@ -241,7 +242,7 @@
       }
 
       if (data.code === "success") {
-        var result = "Completed in " + data.ms + "ms";
+        result = "Completed in " + data.ms + "ms";
 
         switch (data.op) {
           case "count":
@@ -255,11 +256,16 @@
             break;
         }
 
-        html = self._buildResultLine("shell-success", result);
-        self._addLine(html);
+        html = self._buildResultLine("shell-success shell-history-result-line", result);
+        $oldInputContainer.append(html);
       }
     },
 
+    /**
+     * Helps preparing shell results for results with "count"
+     * @private
+     * @param {String} data
+     */
     _buildCountResult: function(data) {
       var self = this,
           result = " - Count result: ";
@@ -267,6 +273,11 @@
       return result + self._wrapInSpan("shell-result-string", data);
     },
 
+    /**
+     * Helps preparing shell results for results with "distinct"
+     * @private
+     * @param {Object, Array} data
+     */
     _buildDistinctResult: function(data) {
       var self = this,
           result = " - Distinct result: ",
@@ -289,6 +300,11 @@
       return self._wrapInSpan("shell-result-string", result);
     },
 
+    /**
+     * Helps preparing shell results for results with "distribution"
+     * @private
+     * @param {Object} data
+     */
     _buildDistributionResult: function(data) {
       var self = this,
           result = " - Distribution result: ",
@@ -312,17 +328,27 @@
       return self._wrapInSpan("shell-result-string", result);
     },
 
+    /**
+     * Wraps Strings in span elements
+     * @private
+     * @param {String} cssClass
+     * @param {String} data
+     */
     _wrapInSpan: function(cssClass, data) {
 
       return '<span class="' + cssClass + '">' + data + '</span>';
     },
 
+    /**
+     * Logs to the console if present
+     * @private
+     * @param {String} text
+     */
     _logToConsole: function(text) {
       if (window.console && console.log) {
         console.log(text);
       }
     }
-
   };
 
   $.fn.extend({
@@ -340,8 +366,8 @@
   });
 
   $.fn.shell.defaults = {
-
+    history: true
   };
 
 
-}(jQuery));
+}(jQuery, window));

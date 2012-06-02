@@ -16,7 +16,9 @@
       };
     },
     teardown: function() {
-
+      if (this.ajaxStub) {
+        this.ajaxStub.restore();
+      }
     }
   });
 
@@ -128,7 +130,7 @@
   test("render callback should be called if a error happens", 2, function() {
     var errorMsg = {code: "error", reason: "Internal error."};
 
-    sinon.stub($, "ajax").yieldsTo("error", []);
+    this.ajaxStub = sinon.stub($, "ajax").yieldsTo("error", []);
 
     this.elem.shell();
     var instance = $.data(this.elem[0], "shell");
@@ -248,6 +250,17 @@
 
     strictEqual($('body').find('#bar').length, 1);
     strictEqual($('body').find('#bar').text(), "foo");
+  });
+
+  test("if the shell gets too long, old elements are removed", 1, function() {
+    this.elem.shell();
+    this.ajaxStub = sinon.stub($, "ajax").yieldsTo("success", {code: "success", ms: "20", op: "distribution", result: []});
+
+    for (var i = 0; i < 20; i++) {
+      this.enterText("test");
+    }
+
+    strictEqual($(".shell-old-input").length, 14);
   });
 
 }(jQuery));
