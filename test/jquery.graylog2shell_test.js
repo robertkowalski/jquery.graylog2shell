@@ -263,4 +263,14 @@
     strictEqual($(".shell-old-input").length, 14);
   });
 
+  test("calling the public .('focus') will refocus the input field", 2, function() {
+    this.elem.shell();
+
+    $('#another-input').focus();
+    strictEqual($('#another-input')[0], $('#another-input')[0].ownerDocument.activeElement, "input should be focussed");
+
+    this.elem.shell('focus');
+    strictEqual($("#shell-command-input")[0], $("#shell-command-input")[0].ownerDocument.activeElement, "input should be focussed");
+  });
+
 }(jQuery));
