@@ -289,17 +289,20 @@
           result = " - Distinct result: ",
           count = data.length,
           i = 0,
+          hasOwn = Object.prototype.hasOwnProperty,
           index;
 
       if (count === 0) {
         result += "No matches.";
       } else {
         for (index in data) {
-          result += data[index];
-          if (i < count - 1) {
-            result += ",";
+          if (hasOwn.call(data, index)) {
+            result += data[index];
+            if (i < count - 1) {
+              result += ",";
+            }
+            i++;
           }
-          i++;
         }
       }
 
@@ -316,19 +319,21 @@
           result = " - Distribution result: ",
           count = data.length,
           i = 0,
+          hasOwn = Object.prototype.hasOwnProperty,
           index;
 
       if (data.length === 0) {
         result += "No matches.";
       } else {
         for (index in data) {
-          result += data[index].distinct + " (" + parseInt(data[index].count, 10) + ")";
-          if (i < count - 1) {
-            result += ", ";
+          if (hasOwn.call(data, index)) {
+            result += data[index].distinct + " (" + parseInt(data[index].count, 10) + ")";
+            if (i < count - 1) {
+              result += ", ";
+            }
+            i++;
           }
-          i++;
         }
-
       }
 
       return self._wrapInSpan("shell-result-string", result);
