@@ -1,4 +1,4 @@
-/*! jQuery Graylog2 Shell - v0.1.0 - 2012-06-02
+/*! jQuery Graylog2 Shell - v0.1.0 - 2012-06-22
 * https://github.com/robertkowalski/jquery.graylog2shell
 * Copyright (c) 2012 Robert Kowalski; Licensed GPL */
 
@@ -237,12 +237,6 @@
         return;
       }
 
-      if (data.op === "findresult") {
-        $contentInner = $("#content-inner");
-        $contentInner.html(data.content);
-        return;
-      }
-
       if (data.code === "success") {
         result = "Completed in " + data.ms + "ms";
 
@@ -256,6 +250,12 @@
           case "distribution":
             result += self._buildDistributionResult(data.result);
             break;
+        }
+
+        if (data.op === "findresult") {
+          $contentInner = $("#content-inner");
+          $contentInner.html(data.content);
+          return;
         }
 
         html = self._buildResultLine("shell-success shell-history-result-line", result);
@@ -285,17 +285,20 @@
           result = " - Distinct result: ",
           count = data.length,
           i = 0,
+          hasOwn = Object.prototype.hasOwnProperty,
           index;
 
       if (count === 0) {
         result += "No matches.";
       } else {
         for (index in data) {
-          result += data[index];
-          if (i < count - 1) {
-            result += ",";
+          if (hasOwn.call(data, index)) {
+            result += data[index];
+            if (i < count - 1) {
+              result += ",";
+            }
+            i++;
           }
-          i++;
         }
       }
 
@@ -312,19 +315,21 @@
           result = " - Distribution result: ",
           count = data.length,
           i = 0,
+          hasOwn = Object.prototype.hasOwnProperty,
           index;
 
       if (data.length === 0) {
         result += "No matches.";
       } else {
         for (index in data) {
-          result += data[index].distinct + " (" + parseInt(data[index].count, 10) + ")";
-          if (i < count - 1) {
-            result += ", ";
+          if (hasOwn.call(data, index)) {
+            result += data[index].distinct + " (" + parseInt(data[index].count, 10) + ")";
+            if (i < count - 1) {
+              result += ", ";
+            }
+            i++;
           }
-          i++;
         }
-
       }
 
       return self._wrapInSpan("shell-result-string", result);
