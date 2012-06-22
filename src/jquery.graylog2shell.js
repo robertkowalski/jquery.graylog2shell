@@ -241,12 +241,6 @@
         return;
       }
 
-      if (data.op === "findresult") {
-        $contentInner = $("#content-inner");
-        $contentInner.html(data.content);
-        return;
-      }
-
       if (data.code === "success") {
         result = "Completed in " + data.ms + "ms";
 
@@ -260,6 +254,12 @@
           case "distribution":
             result += self._buildDistributionResult(data.result);
             break;
+        }
+
+        if (data.op === "findresult") {
+          $contentInner = $("#content-inner");
+          $contentInner.html(data.content);
+          return;
         }
 
         html = self._buildResultLine("shell-success shell-history-result-line", result);
