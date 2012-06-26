@@ -259,7 +259,6 @@
         if (data.op === "findresult") {
           $contentInner = $("#content-inner");
           $contentInner.html(data.content);
-          return;
         }
 
         html = self._buildResultLine("shell-success shell-history-result-line", result);

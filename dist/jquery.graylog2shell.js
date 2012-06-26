@@ -1,4 +1,4 @@
-/*! jQuery Graylog2 Shell - v0.1.0 - 2012-06-22
+/*! jQuery Graylog2 Shell - v0.1.0 - 2012-06-26
 * https://github.com/robertkowalski/jquery.graylog2shell
 * Copyright (c) 2012 Robert Kowalski; Licensed GPL */
 
@@ -255,7 +255,6 @@
         if (data.op === "findresult") {
           $contentInner = $("#content-inner");
           $contentInner.html(data.content);
-          return;
         }
 
         html = self._buildResultLine("shell-success shell-history-result-line", result);
