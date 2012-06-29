@@ -14,7 +14,7 @@
 
 .shell-prompt {
   font-weight: bold;
-  float:left;
+  float: left;
 }
 
 .shell-command {
@@ -32,14 +32,6 @@
   padding-right: 5px;
 }
 
-.shell-old-input {
-
-}
-
-.shell-error {
-
-}
-
-.shell-success {
-
+.shell-result-string {
+  color: #fd0c99;
 }

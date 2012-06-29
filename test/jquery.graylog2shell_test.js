@@ -31,7 +31,7 @@
     var spacer = 30;
     var initialwidth = $("#shell-container").find("input").outerWidth(true);
     this.elem.shell();
-    strictEqual($("#shell-container").find("input").outerWidth(true)>initialwidth, true, "should be scaling the input width");
+    strictEqual($("#shell-container").find("input").outerWidth(true) > initialwidth, true, "should be scaling the input width");
   });
 
   test("should be focussed", 1, function() {
@@ -76,16 +76,22 @@
     strictEqual($("#shell-command-input").val(), "graylog", "input should be graylog then");
   });
 
-  test("a loading div is shown after sending input", 1, function() {
+  test("a loading div is shown after calling processInput", 1, function() {
+    this.ajaxStub = sinon.stub($, "ajax").returns(true);
+
     this.elem.shell();
-    this.enterText("graylog");
+    var instance = $.data(this.elem[0], "shell");
+    instance._processInput();
 
     strictEqual($(".shell-loading").length, 1, "a loading status should be shown then");
   });
 
   test("inputfield is disabled first", 1, function() {
+    this.ajaxStub = sinon.stub($, "ajax").returns(true);
+
     this.elem.shell();
-    this.enterText("graylog");
+    var instance = $.data(this.elem[0], "shell");
+    instance._processInput();
 
     strictEqual($("#shell-command-input").attr("disabled"), true);
   });
@@ -100,13 +106,14 @@
     strictEqual($(".shell-wait").length, 0, "no .shell-wait elements");
   });
 
-  test("new input shows up as 'shell-old-input' after submitting by pressing enter", 2, function() {
-    this.elem.shell();
-    this.enterText("test1");
-    this.enterText("test");
+  test("new input shows up as 'shell-old-input' after submitting by pressing enter", 1, function() {
+    this.ajaxStub = sinon.stub($, "ajax").returns(true);
 
-    strictEqual($("#shell-oldinput-container").find('div').length, 2, "2 .shell-old-input elements");
-    strictEqual($(".shell-old-input").last().text(), "test", ".shell-old-input has value test");
+    this.elem.shell();
+    var instance = $.data(this.elem[0], "shell");
+    instance._processInput();
+
+    strictEqual($("#shell-oldinput-container").find(".shell-old-input").length, 1, "2 .shell-old-input elements");
   });
 
   test("if history is disabled, new input shows NOT up after submitting by pressing enter", 1, function() {
