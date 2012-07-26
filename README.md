@@ -1,6 +1,19 @@
+# Further development is happening directly in [graylog2-web-interface][graylog]  
+
+[graylog]: https://github.com/Graylog2/graylog2-web-interface
+
+
+
+
+
+
+
+----
+
 # jQuery Graylog2 Shell
 
 Shell for Graylog2
+
 
 ## Getting Started
 Download the [production version][min] or the [development version][max].
